@@ -43,3 +43,7 @@ SFML is licensed under the zlib license
 Bullet Physics is licensed under the zlib license
 
 * http://bulletphysics.org/mediawiki-1.5.8/index.php/LICENSE
+
+SDL 2.0 is licensed under the zlib license
+
+* https://www.libsdl.org/license.php
