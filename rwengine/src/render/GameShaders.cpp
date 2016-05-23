@@ -3,7 +3,7 @@
 namespace GameShaders {
 
 const char* WaterHQ::VertexShader = R"(
-#version 150
+#version 330
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -63,7 +63,7 @@ void main()
 })";
 
 const char* WaterHQ::FragmentShader = R"(
-#version 150
+#version 330
 
 in vec3 Normal;
 in vec2 TexCoords;
@@ -76,7 +76,7 @@ void main() {
 })";
 
 const char* Mask3D::VertexShader = R"(
-#version 150
+#version 330
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -102,7 +102,7 @@ void main()
 })";
 
 const char* Mask3D::FragmentShader = R"(
-#version 150
+#version 330
 
 in vec3 pp;
 out vec4 outColour;
@@ -111,7 +111,7 @@ void main() {
 })";
 
 const char* Sky::VertexShader = R"(
-#version 150
+#version 330
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -137,7 +137,7 @@ void main() {
 })";
 
 const char* Sky::FragmentShader = R"(
-#version 150
+#version 330
 
 in vec3 Position;
 uniform vec4 TopColor;
@@ -153,7 +153,7 @@ void main() {
  */
 
 const char* WorldObject::VertexShader = R"(
-#version 150
+#version 330
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -198,8 +198,8 @@ void main()
 })";
 
 const char* WorldObject::FragmentShader = R"(
-#version 150
 #extension GL_ARB_uniform_buffer_object : enable
+#version 330
 
 in vec3 Normal;
 in vec2 TexCoords;
@@ -249,8 +249,8 @@ void main()
 })";
 
 const char* Particle::FragmentShader = R"(
-#version 150
 #extension GL_ARB_uniform_buffer_object : enable
+#version 330
 
 in vec3 Normal;
 in vec2 TexCoords;
@@ -292,7 +292,7 @@ void main()
 
 
 const char* ScreenSpaceRect::VertexShader = R"(
-#version 150
+#version 330
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -309,7 +309,7 @@ void main()
 })";
 
 const char* ScreenSpaceRect::FragmentShader = R"(
-#version 150
+#version 330
 
 in vec2 TexCoords;
 in vec4 Colour;
@@ -325,7 +325,7 @@ void main()
 })";
 
 const char* DefaultPostProcess::VertexShader = R"(
-#version 150
+#version 330
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -338,7 +338,7 @@ void main()
 })";
 
 const char* DefaultPostProcess::FragmentShader = R"(
-#version 150
+#version 330
 
 in vec2 TexCoords;
 uniform sampler2D colour;
