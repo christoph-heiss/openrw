@@ -123,31 +123,6 @@ void IngameState::tick(float dt)
 	auto player = game->getPlayer();
 	if( player && player->isInputEnabled() )
 	{
-		int x, y;
-		SDL_GetWindowSize(getWindow(), &x, &y);
-		sf::Vector2f screenSize(x, y);
-		SDL_GetMouseState(&x, &y);
-		sf::Vector2i deltaMouse(x, y);
-		sf::Vector2f mouseMove(deltaMouse.x / screenSize.x, deltaMouse.y / screenSize.y);
-
-		if (game->hasFocus())
-		{
-			sf::Vector2f mousePos(sf::Mouse::getPosition(getWindow()));
-			sf::Vector2f deltaMouse = (mousePos - screenCenter);
-			mouseMove = sf::Vector2f(deltaMouse.x / screenSize.x, deltaMouse.y / screenSize.y);
-			sf::Mouse::setPosition(sf::Vector2i(screenCenter), getWindow());
-
-			if(deltaMouse.x != 0 || deltaMouse.y != 0)
-			{
-				autolookTimer = kAutoLookTime;
-				if (!m_invertedY) {
-					mouseMove.y = -mouseMove.y;
-				}
-				m_cameraAngles += glm::vec2(mouseMove.x, mouseMove.y);
-				m_cameraAngles.y = glm::clamp(m_cameraAngles.y, kCameraPitchLimit, glm::pi<float>() - kCameraPitchLimit);
-			}
-		}
-
 		float viewDistance = 4.f;
 		switch( camMode )
 		{
@@ -448,6 +423,21 @@ void IngameState::handlePlayerInput(const SDL_Event& event)
 		break;
 	case SDL_MOUSEWHEEL:
 		player->getCharacter()->cycleInventory(event.wheel.y > 0);
+		break;
+	case SDL_MOUSEMOTION:
+		if (game->hasFocus())
+		{
+			glm::ivec2 screenSize = getWindow().getSize();
+			glm::vec2 mouseMove(event.motion.xrel / static_cast<float>(screenSize.x),
+			                    event.motion.yrel / static_cast<float>(screenSize.y));
+
+			autolookTimer = kAutoLookTime;
+			if (!m_invertedY) {
+				mouseMove.y = -mouseMove.y;
+			}
+			m_cameraAngles += glm::vec2(mouseMove.x, mouseMove.y);
+			m_cameraAngles.y = glm::clamp(m_cameraAngles.y, kCameraPitchLimit, glm::pi<float>() - kCameraPitchLimit);
+		}
 		break;
 	default:
 		break;
