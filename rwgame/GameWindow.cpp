@@ -24,10 +24,6 @@ void GameWindow::create(size_t w, size_t h, bool fullscreen)
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	glcontext = SDL_GL_CreateContext(window);
-
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-	SDL_ShowCursor(SDL_DISABLE);
-	SDL_SetWindowGrab(window, SDL_TRUE);
 }
 
 
