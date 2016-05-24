@@ -198,8 +198,8 @@ void main()
 })";
 
 const char* WorldObject::FragmentShader = R"(
-#extension GL_ARB_uniform_buffer_object : enable
 #version 330
+#extension GL_ARB_uniform_buffer_object : enable
 
 in vec3 Normal;
 in vec2 TexCoords;
@@ -249,8 +249,8 @@ void main()
 })";
 
 const char* Particle::FragmentShader = R"(
-#extension GL_ARB_uniform_buffer_object : enable
 #version 330
+#extension GL_ARB_uniform_buffer_object : enable
 
 in vec3 Normal;
 in vec2 TexCoords;
