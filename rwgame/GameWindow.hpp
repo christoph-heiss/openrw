@@ -25,6 +25,11 @@ public:
 	{
 		SDL_GL_SwapWindow(window);
 	}
+
+	bool isOpen() const
+	{
+		return !!window;
+	}
 };
 
 #endif

@@ -294,8 +294,7 @@ int RWGame::run()
 	last_clock_time = clock.now();
 
 	// Loop until the window is closed or we run out of state.
-	bool quit = false;
-	while (!quit && StateManager::get().states.size()) {
+	while (window.isOpen() && StateManager::get().states.size()) {
 		State* state = StateManager::get().states.back();
 
 		RW_PROFILE_FRAME_BOUNDARY();
@@ -305,7 +304,7 @@ int RWGame::run()
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:
-				quit = true;
+				window.close();
 				break;
 
 			case SDL_WINDOWEVENT:

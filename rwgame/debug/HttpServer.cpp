@@ -130,7 +130,7 @@ void HttpServer::run()
 
 	std::cout << "STARTING HTTP SERVER" << std::endl;
 
-    while (true) {
+    while (game->getWindow().isOpen()) {
 		sf::TcpSocket client;
 		if (listener.accept(client) == sf::Socket::Done) {
 			std::cout << "New connection from "
