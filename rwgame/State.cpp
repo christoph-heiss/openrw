@@ -52,7 +52,7 @@ GameWorld* State::getWorld()
 	return game->getWorld();
 }
 
-SDL_Window* State::getWindow()
+GameWindow& State::getWindow()
 {
 	return game->getWindow();
 }

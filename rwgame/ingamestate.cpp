@@ -108,14 +108,12 @@ void IngameState::enter()
 		started = true;
 	}
 
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-	SDL_ShowCursor(0);
+	getWindow().hideCursor();
 }
 
 void IngameState::exit()
 {
-	SDL_SetRelativeMouseMode(SDL_FALSE);
-	SDL_ShowCursor(1);
+
 }
 
 void IngameState::tick(float dt)

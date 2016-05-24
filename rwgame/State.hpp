@@ -8,6 +8,7 @@
 #include "MenuSystem.hpp"
 #include <glm/gtc/quaternion.hpp>
 #include <SDL2/SDL.h>
+#include "GameWindow.hpp"
 
 class RWGame;
 class GameWorld;
@@ -69,7 +70,7 @@ struct State
 	virtual bool shouldWorldUpdate();
 
 	GameWorld* getWorld();
-	SDL_Window* getWindow();
+	GameWindow& getWindow();
 };
 
 struct StateManager

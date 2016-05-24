@@ -124,14 +124,12 @@ DebugState::DebugState(RWGame* game, const glm::vec3& vp, const glm::quat& vd)
 
 void DebugState::enter()
 {
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-	SDL_ShowCursor(0);
+	getWindow().hideCursor();
 }
 
 void DebugState::exit()
 {
-	SDL_SetRelativeMouseMode(SDL_FALSE);
-	SDL_ShowCursor(1);
+
 }
 
 void DebugState::tick(float dt)

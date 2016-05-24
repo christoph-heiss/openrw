@@ -10,7 +10,7 @@ PauseState::PauseState(RWGame* game)
 	m->offset = glm::vec2( 200.f, 200.f );
 	m->addEntry(Menu::lambda("Continue", [] { StateManager::get().exit(); }));
 	m->addEntry(Menu::lambda("Options", [] { std::cout << "Options" << std::endl; }));
-	m->addEntry(Menu::lambda("Exit", [&] { SDL_DestroyWindow(getWindow()); }));
+	m->addEntry(Menu::lambda("Exit", [&] { getWindow().close(); }));
 	this->enterMenu(m);
 }
 
@@ -18,7 +18,7 @@ void PauseState::enter()
 {
 	getWorld()->setPaused(true);
 
-	game->getWindow().setMouseCursorVisible(true);
+	getWindow().showCursor();
 }
 
 void PauseState::exit()
@@ -34,14 +34,14 @@ void PauseState::tick(float dt)
 void PauseState::draw(GameRenderer* r)
 {
 	MapRenderer::MapInfo map;
-	
+
 	auto& vp = r->getRenderer()->getViewport();
-	
+
 	map.worldSize = 4000.f;
 	map.clipToSize = false;
 	map.screenPosition = glm::vec2(vp.x/2, vp.y/2);
 	map.screenSize = std::max(vp.x, vp.y);
-	
+
 	game->getRenderer()->map.draw(getWorld(), map);
 
     State::draw(r);

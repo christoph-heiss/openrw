@@ -24,7 +24,7 @@ void MenuState::enterMainMenu()
 	m->addEntry(Menu::lambda("Load Game", [=] { enterLoadMenu(); }));
 	m->addEntry(Menu::lambda("Test", [=] { StateManager::get().enter(new IngameState(game, true, "test")); }));
 	m->addEntry(Menu::lambda("Options", [] { RW_UNIMPLEMENTED("Options Menu"); }));
-	m->addEntry(Menu::lambda("Exit", [=] { SDL_DestroyWindow(getWindow()); }));
+	m->addEntry(Menu::lambda("Exit", [=] { getWindow().close(); }));
 	this->enterMenu(m);
 }
 
@@ -53,7 +53,7 @@ void MenuState::enterLoadMenu()
 
 void MenuState::enter()
 {
-	game->getWindow().setMouseCursorVisible(true);
+	getWindow().showCursor();
 }
 
 void MenuState::exit()

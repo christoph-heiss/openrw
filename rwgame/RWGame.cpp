@@ -88,22 +88,8 @@ RWGame::RWGame(int argc, char* argv[])
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		throw std::runtime_error("Failed to initialize SDL2!");
 
-	uint32_t style = SDL_WINDOW_OPENGL/* | SDL_WINDOW_ALLOW_HIGHDPI*/;
-	if( fullscreen )
-	{
-		style |= SDL_WINDOW_FULLSCREEN;
-	}
-
-	window = SDL_CreateWindow("RWGame", 0, 0, w, h, style);
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-	glcontext = SDL_GL_CreateContext(window);
+	window.create(w, h, fullscreen);
+	window.hideCursor();
 
 	log.addReciever(&logPrinter);
 	log.info("Game", "Game directory: " + config.getGameDataPath());
@@ -401,7 +387,7 @@ int RWGame::run()
 
 		renderProfile();
 
-		SDL_GL_SwapWindow(window);
+		window.swap();
 	}
 
     if( httpserver_thread )
@@ -499,9 +485,8 @@ void RWGame::render(float alpha, float time)
 	
 	getRenderer()->getRenderer()->swap();
 
-	int x, y;
-	SDL_GetWindowSize(window, &x, &y);
-	renderer->setViewport(x, y);
+	glm::ivec2 windowSize = window.getSize();
+	renderer->setViewport(windowSize.x, windowSize.y);
 
 	ViewCamera viewCam;
 	viewCam.frustum.fov = glm::radians(90.f);
@@ -554,7 +539,7 @@ void RWGame::render(float alpha, float time)
 		viewCam.rotation = glm::slerp(lastCam.rotation, nextCam.rotation, alpha);
 	}
 
-	viewCam.frustum.aspectRatio = x / (float)y;
+	viewCam.frustum.aspectRatio = windowSize.x / static_cast<float>(windowSize.y);
 
 	if ( state->isCinematic )
 	{

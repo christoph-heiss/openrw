@@ -10,6 +10,7 @@
 #include "game.hpp"
 
 #include "GameConfig.hpp"
+#include "GameWindow.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -31,8 +32,7 @@ class RWGame
 	bool debugScript;
     HttpServer* httpserver = nullptr;
     std::thread* httpserver_thread = nullptr;
-	SDL_Window* window;
-	SDL_GLContext glcontext;
+	GameWindow window;
 	std::chrono::steady_clock clock;
 	std::chrono::steady_clock::time_point last_clock_time;
 
@@ -77,7 +77,7 @@ public:
 		return renderer;
 	}
 
-	SDL_Window* getWindow()
+	GameWindow& getWindow()
 	{
 		return window;
 	}

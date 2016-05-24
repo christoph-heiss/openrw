@@ -3,8 +3,8 @@ add_executable(rwgame
 
 	RWGame.cpp
 
-	GameConfig.hpp
 	GameConfig.cpp
+	GameWindow.cpp
 
 	State.cpp
 
