@@ -6,12 +6,12 @@
 #include <engine/GameWorld.hpp>
 #include <render/GameRenderer.hpp>
 #include <script/ScriptMachine.hpp>
+#include <chrono>
 #include "game.hpp"
 
 #include "GameConfig.hpp"
 
 #include <SDL2/SDL.h>
-#include <SFML/System/Clock.hpp>
 
 class PlayerController;
 class HttpServer;
@@ -33,7 +33,9 @@ class RWGame
     std::thread* httpserver_thread = nullptr;
 	SDL_Window* window;
 	SDL_GLContext glcontext;
-	sf::Clock clock;
+	std::chrono::steady_clock clock;
+	std::chrono::steady_clock::time_point last_clock_time;
+
 	bool inFocus;
 	ViewCamera lastCam, nextCam;
 	bool showDebugStats;
