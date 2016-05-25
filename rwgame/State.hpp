@@ -7,6 +7,7 @@
 #include <render/ViewCamera.hpp>
 #include "MenuSystem.hpp"
 #include <glm/gtc/quaternion.hpp>
+#include <SDL2/SDL.h>
 
 class RWGame;
 class GameWorld;
@@ -56,34 +57,8 @@ struct State
 		}
 		return currentMenu;
 	}
-	
-	virtual void handleEvent(const sf::Event& e)
-	{
-		auto m = getCurrentMenu();
-		if(! m) return;
-		switch(e.type) {
-			case sf::Event::MouseButtonReleased:
-				m->click(e.mouseButton.x, e.mouseButton.y);
-				break;
-			case sf::Event::MouseMoved:
-				m->hover(e.mouseMove.x, e.mouseMove.y);
-				break;
-			case sf::Event::KeyPressed:
-				switch(e.key.code) {
-				default: break;
-					case sf::Keyboard::Up:
-						m->move(-1);
-						break;
-					case sf::Keyboard::Down:
-						m->move(1);
-						break;
-					case sf::Keyboard::Return:
-						m->activate();
-						break;
-				}
-			default: break;
-		};
-	}
+
+	virtual void handleEvent(const SDL_Event& e);
 
 	virtual const ViewCamera& getCamera();
 	
@@ -94,7 +69,7 @@ struct State
 	virtual bool shouldWorldUpdate();
 
 	GameWorld* getWorld();
-	sf::RenderWindow& getWindow();
+	SDL_Window* getWindow();
 };
 
 struct StateManager

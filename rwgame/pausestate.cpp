@@ -10,7 +10,7 @@ PauseState::PauseState(RWGame* game)
 	m->offset = glm::vec2( 200.f, 200.f );
 	m->addEntry(Menu::lambda("Continue", [] { StateManager::get().exit(); }));
 	m->addEntry(Menu::lambda("Options", [] { std::cout << "Options" << std::endl; }));
-	m->addEntry(Menu::lambda("Exit", [&] { getWindow().close(); }));
+	m->addEntry(Menu::lambda("Exit", [&] { SDL_DestroyWindow(getWindow()); }));
 	this->enterMenu(m);
 }
 
@@ -47,12 +47,12 @@ void PauseState::draw(GameRenderer* r)
     State::draw(r);
 }
 
-void PauseState::handleEvent(const sf::Event &e)
+void PauseState::handleEvent(const SDL_Event& e)
 {
 	switch(e.type) {
-		case sf::Event::KeyPressed:
-			switch(e.key.code) {
-				case sf::Keyboard::Escape:
+		case SDL_KEYDOWN:
+			switch(e.key.keysym.sym) {
+				case SDLK_ESCAPE:
 					StateManager::get().exit();
 					break;
 				default: break;

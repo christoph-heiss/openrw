@@ -41,7 +41,7 @@ void LoadingState::setNextState(State* nextState)
 	next = nextState;
 }
 
-void LoadingState::handleEvent(const sf::Event &e)
+void LoadingState::handleEvent(const SDL_Event& e)
 {
 	State::handleEvent(e);
 }

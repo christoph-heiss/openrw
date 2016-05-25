@@ -102,7 +102,7 @@ void BenchmarkState::draw(GameRenderer* r)
 	State::draw(r);
 }
 
-void BenchmarkState::handleEvent(const sf::Event &e)
+void BenchmarkState::handleEvent(const SDL_Event& e)
 {
 	State::handleEvent(e);
 }

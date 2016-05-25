@@ -10,7 +10,8 @@
 
 #include "GameConfig.hpp"
 
-#include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
+#include <SFML/System/Clock.hpp>
 
 class PlayerController;
 class HttpServer;
@@ -30,7 +31,8 @@ class RWGame
 	bool debugScript;
     HttpServer* httpserver = nullptr;
     std::thread* httpserver_thread = nullptr;
-	sf::RenderWindow window;
+	SDL_Window* window;
+	SDL_GLContext glcontext;
 	sf::Clock clock;
 	bool inFocus;
 	ViewCamera lastCam, nextCam;
@@ -73,7 +75,7 @@ public:
 		return renderer;
 	}
 
-	sf::RenderWindow& getWindow()
+	SDL_Window* getWindow()
 	{
 		return window;
 	}
@@ -136,7 +138,7 @@ private:
 	void renderDebugPaths(float time);
 	void renderProfile();
 
-	void globalKeyEvent(const sf::Event& event);
+	void globalKeyEvent(const SDL_Event& event);
 };
 
 #endif

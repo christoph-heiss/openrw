@@ -84,18 +84,23 @@ RWGame::RWGame(int argc, char* argv[])
 			benchFile = argv[i+1];
 		}
 	}
-	
-	
-	sf::Uint32 style = sf::Style::Default;
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		throw std::runtime_error("Failed to initialize SDL2!");
+
+	uint32_t style = SDL_WINDOW_OPENGL/* | SDL_WINDOW_ALLOW_HIGHDPI*/;
 	if( fullscreen )
 	{
-		style |= sf::Style::Fullscreen;
+		style |= SDL_WINDOW_FULLSCREEN;
 	}
 
-	sf::ContextSettings cs;
-	cs.depthBits = 32;
-	cs.stencilBits = 8;
-	window.create(sf::VideoMode(w, h), "",  style, cs);
+	window = SDL_CreateWindow("RWGame", 0, 0, w, h, style);
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	glcontext = SDL_GL_CreateContext(window);
 
 	log.addReciever(&logPrinter);
 	log.info("Game", "Game directory: " + config.getGameDataPath());
@@ -300,27 +305,40 @@ int RWGame::run()
 	clock.restart();
 	
 	// Loop until the window is closed or we run out of state.
-	while (window.isOpen() && StateManager::get().states.size()) {
+	bool quit = false;
+	while (!quit && StateManager::get().states.size()) {
 		State* state = StateManager::get().states.back();
 
 		RW_PROFILE_FRAME_BOUNDARY();
 		
 		RW_PROFILE_BEGIN("Input");
-		sf::Event event;
-		while (window.pollEvent(event)) {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
-			case sf::Event::GainedFocus:
-				inFocus = true;
+			case SDL_QUIT:
+				quit = true;
 				break;
-			case sf::Event::LostFocus:
-				inFocus = false;
+
+			case SDL_WINDOWEVENT:
+				switch (event.window.event) {
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+					inFocus = true;
+					break;
+
+				case SDL_WINDOWEVENT_FOCUS_LOST:
+					inFocus = false;
+					break;
+				}
 				break;
-			case sf::Event::KeyPressed:
+
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEWHEEL:
 				globalKeyEvent(event);
 				break;
-			case sf::Event::Closed:
-				return 0;
-			default: break;
 			}
 
 			RW_PROFILE_BEGIN("State");
@@ -328,11 +346,6 @@ int RWGame::run()
 			RW_PROFILE_END()
 		}
 		RW_PROFILE_END();
-		
-		if(! window.isOpen() )
-		{
-			break;
-		}
 
 		float timer = clock.restart().asSeconds();
 		accum += timer * timescale;
@@ -381,7 +394,7 @@ int RWGame::run()
 
 		renderProfile();
 
-		window.display();
+		SDL_GL_SwapWindow(window);
 	}
 
     if( httpserver_thread )
@@ -478,10 +491,11 @@ void RWGame::render(float alpha, float time)
 	lastDraws = getRenderer()->getRenderer()->getDrawCount();
 	
 	getRenderer()->getRenderer()->swap();
-	
-	auto size = getWindow().getSize();
-	renderer->setViewport(size.x, size.y);
-	
+
+	int x, y;
+	SDL_GetWindowSize(window, &x, &y);
+	renderer->setViewport(x, y);
+
 	ViewCamera viewCam;
 	viewCam.frustum.fov = glm::radians(90.f);
 	if( state->currentCutscene != nullptr && state->cutsceneStartTime >= 0.f )
@@ -533,8 +547,8 @@ void RWGame::render(float alpha, float time)
 		viewCam.rotation = glm::slerp(lastCam.rotation, nextCam.rotation, alpha);
 	}
 
-	viewCam.frustum.aspectRatio = window.getSize().x / (float) window.getSize().y;
-	
+	viewCam.frustum.aspectRatio = x / (float)y;
+
 	if ( state->isCinematic )
 	{
 		viewCam.frustum.fov *= viewCam.frustum.aspectRatio;
@@ -775,31 +789,31 @@ void RWGame::renderProfile()
 #endif
 }
 
-void RWGame::globalKeyEvent(const sf::Event& event)
+void RWGame::globalKeyEvent(const SDL_Event& event)
 {
-	switch (event.key.code) {
-	case sf::Keyboard::LBracket:
+	switch (event.key.keysym.sym) {
+	case SDLK_LEFTBRACKET:
 		state->basic.gameMinute -= 30.f;
 		break;
-	case sf::Keyboard::RBracket:
+	case SDLK_RIGHTBRACKET:
 		state->basic.gameMinute += 30.f;
 		break;
-	case sf::Keyboard::Num9:
+	case SDLK_9:
 		timescale *= 0.5f;
 		break;
-	case sf::Keyboard::Num0:
+	case SDLK_0:
 		timescale *= 2.0f;
 		break;
-	case sf::Keyboard::F1:
+	case SDLK_F1:
 		showDebugStats = ! showDebugStats;
 		break;
-	case sf::Keyboard::F2:
+	case SDLK_F2:
 		showDebugPaths = ! showDebugPaths;
 		break;
-	case sf::Keyboard::F3:
+	case SDLK_F3:
 		showDebugPhysics = ! showDebugPhysics;
 		break;
-	case sf::Keyboard::F12: {
+	case SDLK_F12: {
 		auto homedir = getenv("HOME");
 		if( homedir == nullptr ) {
 			std::cerr << "Unable to determine home directory for screenshot" << std::endl;
@@ -808,7 +822,7 @@ void RWGame::globalKeyEvent(const sf::Event& event)
 
 		std::string savePath(homedir);
 		std::string path = savePath+"/screenshot.png";
-		window.capture().saveToFile(path);
+		// window.capture().saveToFile(path);
 		break;
 	}
 	default: break;

@@ -24,7 +24,7 @@ void MenuState::enterMainMenu()
 	m->addEntry(Menu::lambda("Load Game", [=] { enterLoadMenu(); }));
 	m->addEntry(Menu::lambda("Test", [=] { StateManager::get().enter(new IngameState(game, true, "test")); }));
 	m->addEntry(Menu::lambda("Options", [] { RW_UNIMPLEMENTED("Options Menu"); }));
-	m->addEntry(Menu::lambda("Exit", [=] { getWindow().close(); }));
+	m->addEntry(Menu::lambda("Exit", [=] { SDL_DestroyWindow(getWindow()); }));
 	this->enterMenu(m);
 }
 
@@ -66,12 +66,12 @@ void MenuState::tick(float dt)
 
 }
 
-void MenuState::handleEvent(const sf::Event &e)
+void MenuState::handleEvent(const SDL_Event& e)
 {
 	switch(e.type) {
-		case sf::Event::KeyPressed:
-			switch(e.key.code) {
-				case sf::Keyboard::Escape:
+		case SDL_KEYUP:
+			switch(e.key.keysym.sym) {
+				case SDLK_ESCAPE:
 					StateManager::get().exit();
 				default: break;
 			}
