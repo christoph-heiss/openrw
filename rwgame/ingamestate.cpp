@@ -1,19 +1,19 @@
-#include "ingamestate.hpp"
-#include "RWGame.hpp"
-#include "pausestate.hpp"
-#include "debugstate.hpp"
 #include "DrawUI.hpp"
+#include "RWGame.hpp"
+#include "debugstate.hpp"
+#include "ingamestate.hpp"
+#include "pausestate.hpp"
 
 #include <ai/PlayerController.hpp>
-#include <objects/CharacterObject.hpp>
-#include <objects/VehicleObject.hpp>
-#include <objects/ItemPickup.hpp>
 #include <data/Model.hpp>
-#include <items/WeaponItem.hpp>
-#include <engine/GameWorld.hpp>
-#include <engine/GameState.hpp>
-#include <script/ScriptMachine.hpp>
 #include <dynamics/RaycastCallbacks.hpp>
+#include <engine/GameState.hpp>
+#include <engine/GameWorld.hpp>
+#include <items/WeaponItem.hpp>
+#include <objects/CharacterObject.hpp>
+#include <objects/ItemPickup.hpp>
+#include <objects/VehicleObject.hpp>
+#include <script/ScriptMachine.hpp>
 
 constexpr float kAutoLookTime = 2.f;
 constexpr float kAutolookMinVelocity = 0.2f;
@@ -356,92 +356,99 @@ void IngameState::handleEvent(const SDL_Event& event)
 
 void IngameState::handlePlayerInput(const SDL_Event& event)
 {
-	auto player = game->getPlayer();
-	switch(event.type) {
-	case SDL_KEYDOWN:
-		switch(event.key.keysym.sym) {
-		case SDLK_SPACE:
-			if( player->getCharacter()->getCurrentVehicle() ) {
-				player->getCharacter()->getCurrentVehicle()->setHandbraking(true);
-			}
-			else
-			{
-				player->jump();
-			}
-			break;
-		case SDLK_f:
-			if( player->getCharacter()->getCurrentVehicle()) {
-				player->exitVehicle();
-			}
-			else
-				if (player->isCurrentActivity(
-							Activities::EnterVehicle::ActivityName))
-			{
-				// Give up entering a vehicle if we're alreadying doing so
-				player->skipActivity();
-			}
-			else {
-				player->enterNearestVehicle();
-			}
-			break;
-		default:
-			break;
-		}
-
-		switch (event.key.keysym.mod) {
-		case KMOD_LSHIFT:
-			player->setRunning(true);
-			break;
-
-		default: break;
-		}
-	break;
-	case SDL_KEYUP:
-		switch (event.key.keysym.mod) {
-		case KMOD_LSHIFT:
-			player->setRunning(false);
-			break;
-		default: break;
-		}
-
-	break;
-	case SDL_MOUSEBUTTONDOWN:
-		switch(event.button.button) {
-		case SDL_BUTTON_LEFT:
-			player->getCharacter()->useItem(true, true);
-			break;
-		default: break;
-		}
-		break;
-	case SDL_MOUSEBUTTONUP:
-		switch(event.button.button) {
-		case SDL_BUTTON_LEFT:
-			player->getCharacter()->useItem(false, true);
-			break;
-		default: break;
-		}
-		break;
-	case SDL_MOUSEWHEEL:
-		player->getCharacter()->cycleInventory(event.wheel.y > 0);
-		break;
-	case SDL_MOUSEMOTION:
-		if (game->hasFocus())
-		{
-			glm::ivec2 screenSize = getWindow().getSize();
-			glm::vec2 mouseMove(event.motion.xrel / static_cast<float>(screenSize.x),
-			                    event.motion.yrel / static_cast<float>(screenSize.y));
-
-			autolookTimer = kAutoLookTime;
-			if (!m_invertedY) {
-				mouseMove.y = -mouseMove.y;
-			}
-			m_cameraAngles += glm::vec2(mouseMove.x, mouseMove.y);
-			m_cameraAngles.y = glm::clamp(m_cameraAngles.y, kCameraPitchLimit, glm::pi<float>() - kCameraPitchLimit);
-		}
-		break;
-	default:
-		break;
-	}
+  auto player = game->getPlayer();
+  switch(event.type) {
+    case SDL_KEYDOWN: {
+      switch(event.key.keysym.sym) {
+        case SDLK_SPACE:
+          if( player->getCharacter()->getCurrentVehicle() ) {
+            player->getCharacter()->getCurrentVehicle()->setHandbraking(true);
+          }
+          else
+          {
+            player->jump();
+          }
+          break;
+        case SDLK_f:
+          if( player->getCharacter()->getCurrentVehicle()) {
+            player->exitVehicle();
+          }
+          else
+            if (player->isCurrentActivity(
+                                          Activities::EnterVehicle::ActivityName))
+            {
+              // Give up entering a vehicle if we're alreadying doing so
+              player->skipActivity();
+            }
+            else {
+              player->enterNearestVehicle();
+            }
+          break;
+        default:
+          break;
+      }
+      
+      switch (event.key.keysym.mod) {
+        case KMOD_LSHIFT:
+          player->setRunning(true);
+          break;
+          
+        default: break;
+      }
+      break;
+      
+    }
+    case SDL_KEYUP:
+      switch (event.key.keysym.mod) {
+        case KMOD_LSHIFT:
+          player->setRunning(false);
+          break;
+        default: break;
+      }
+      
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+      switch(event.button.button) {
+        case SDL_BUTTON_LEFT:
+          player->getCharacter()->useItem(true, true);
+          break;
+        default: break;
+      }
+      break;
+    case SDL_MOUSEBUTTONUP:
+      switch(event.button.button) {
+        case SDL_BUTTON_LEFT:
+          player->getCharacter()->useItem(false, true);
+          break;
+        default: break;
+      }
+      break;
+    case SDL_MOUSEWHEEL:
+      player->getCharacter()->cycleInventory(event.wheel.y > 0);
+      break;
+    case SDL_MOUSEMOTION:
+      if (game->hasFocus())
+      {
+        glm::ivec2 screenSize = getWindow().getSize();
+        glm::vec2 mouseMove(event.motion.xrel / static_cast<float>(screenSize.x),
+                            event.motion.yrel / static_cast<float>(screenSize.y));
+        
+        autolookTimer = kAutoLookTime;
+        if (!m_invertedY) {
+          mouseMove.y = -mouseMove.y;
+        }
+        m_cameraAngles += glm::vec2(mouseMove.x, mouseMove.y);
+        m_cameraAngles.y = glm::clamp(m_cameraAngles.y, kCameraPitchLimit, glm::pi<float>() - kCameraPitchLimit);
+      }
+      break;
+    default:
+      break;
+  }
+  
+  // stable handling of shift keys
+  const SDL_Keymod modifierState = SDL_GetModState();
+  const bool running = (modifierState & KMOD_LSHIFT) > 0;
+  player->setRunning(running);
 }
 
 
