@@ -3,7 +3,7 @@
 namespace GameShaders {
 
 const char* WaterHQ::VertexShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -53,7 +53,7 @@ void main()
 	mat3 rot = mat3(view);
 	vec3 ray = vec3(-position.x, -position.y, projection[0][0] ) * rot;
 	
-	float plane = texture2D( data, TexCoords ).r;
+	float plane = texture( data, TexCoords ).r;
 	
 	vec3 ws = planeIntercept( campos.xyz, ray, plane );
 	
@@ -63,19 +63,20 @@ void main()
 })";
 
 const char* WaterHQ::FragmentShader = R"(
-#version 130
+#version 150
+
 in vec3 Normal;
 in vec2 TexCoords;
-uniform sampler2D texture;
+uniform sampler2D tex;
 out vec4 outColour;
 in vec3 test;
 void main() {
-	vec4 c = texture2D(texture, TexCoords);
+	vec4 c = texture(tex, TexCoords);
 	outColour = c;
 })";
 
 const char* Mask3D::VertexShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -101,7 +102,8 @@ void main()
 })";
 
 const char* Mask3D::FragmentShader = R"(
-#version 130
+#version 150
+
 in vec3 pp;
 out vec4 outColour;
 void main() {
@@ -109,7 +111,7 @@ void main() {
 })";
 
 const char* Sky::VertexShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -135,7 +137,8 @@ void main() {
 })";
 
 const char* Sky::FragmentShader = R"(
-#version 130
+#version 150
+
 in vec3 Position;
 uniform vec4 TopColor;
 uniform vec4 BottomColor;
@@ -150,9 +153,10 @@ void main() {
  */
 
 const char* WorldObject::VertexShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
+
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec4 _colour;
@@ -194,13 +198,14 @@ void main()
 })";
 
 const char* WorldObject::FragmentShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_uniform_buffer_object : enable
+
 in vec3 Normal;
 in vec2 TexCoords;
 in vec4 Colour;
 in vec3 WorldSpace;
-uniform sampler2D texture;
+uniform sampler2D tex;
 out vec4 fragOut;
 
 layout(std140) uniform SceneData {
@@ -236,7 +241,7 @@ float alphaThreshold = (1.0/255.0);
 void main()
 {
 	// Only the visibility parameter invokes the screen door.
-	vec4 diffuse  = texture2D(texture, TexCoords);
+	vec4 diffuse  = texture(tex, TexCoords);
 	if(visibility <= filterMatrix[int(gl_FragCoord.x)%4][int(gl_FragCoord.y)%4]) discard;
 	if(diffuse.a <= alphaThreshold) discard;
 	vec4 colour_dyn = diffuse * colour;
@@ -244,12 +249,13 @@ void main()
 })";
 
 const char* Particle::FragmentShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_uniform_buffer_object : enable
+
 in vec3 Normal;
 in vec2 TexCoords;
 in vec4 Colour;
-uniform sampler2D texture;
+uniform sampler2D tex;
 out vec4 outColour;
 
 layout(std140) uniform SceneData {
@@ -275,7 +281,7 @@ layout(std140) uniform ObjectData {
 
 void main()
 {
-	vec4 c = texture2D(texture, TexCoords);
+	vec4 c = texture(tex, TexCoords);
 	c.a = clamp(0, length(c.rgb/length(vec3(1,1,1))), 1);
 	if(c.a <= ALPHA_DISCARD_THRESHOLD) discard;
 	float fogZ = (gl_FragCoord.z / gl_FragCoord.w);
@@ -286,7 +292,7 @@ void main()
 
 
 const char* ScreenSpaceRect::VertexShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -303,22 +309,23 @@ void main()
 })";
 
 const char* ScreenSpaceRect::FragmentShader = R"(
-#version 130
+#version 150
+
 in vec2 TexCoords;
 in vec4 Colour;
 uniform vec4 colour;
-uniform sampler2D texture;
+uniform sampler2D tex;
 out vec4 outColour;
 
 void main()
 {
-	vec4 c = texture2D(texture, TexCoords);
+	vec4 c = texture(tex, TexCoords);
 	// Set colour to 0, 0, 0, 1 for textured mode.
 	outColour = vec4(colour.rgb + c.rgb, colour.a * c.a);
 })";
 
 const char* DefaultPostProcess::VertexShader = R"(
-#version 130
+#version 150
 #extension GL_ARB_explicit_attrib_location : enable
 #extension GL_ARB_uniform_buffer_object : enable
 
@@ -331,9 +338,9 @@ void main()
 })";
 
 const char* DefaultPostProcess::FragmentShader = R"(
-#version 130
-in vec2 TexCoords;
+#version 150
 
+in vec2 TexCoords;
 uniform sampler2D colour;
 uniform sampler2D data;
 
@@ -341,7 +348,7 @@ out vec4 outColour;
 
 void main()
 {
-	vec4 c = texture2D(colour, TexCoords);
+	vec4 c = texture(colour, TexCoords);
 	outColour = c;
 })";
 
