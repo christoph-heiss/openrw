@@ -1,6 +1,7 @@
 #include <ai/DefaultAIController.hpp>
 #include <objects/CharacterObject.hpp>
 #include <engine/GameWorld.hpp>
+#include <ai/CharacterControllerActivities.hpp>
 
 glm::vec3 DefaultAIController::getTargetPosition()
 {

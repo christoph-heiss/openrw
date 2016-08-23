@@ -140,9 +140,9 @@ public:
 
 	~CharacterObject();
 
-	Type type() { return Character; }
+	Type type() override { return Character; }
 
-	void tick(float dt);
+	void tick(float dt) override;
 
 	const CharacterState& getCurrentState() const { return currentState; }
 	CharacterState& getCurrentState(){ return currentState; }
@@ -157,7 +157,7 @@ public:
 	 */
 	void updateCharacter(float dt);
 
-	virtual void setPosition(const glm::vec3& pos);
+	virtual void setPosition(const glm::vec3& pos) override;
 
 	bool isAlive() const;
 	bool takeDamage(const DamageInfo& damage) override;

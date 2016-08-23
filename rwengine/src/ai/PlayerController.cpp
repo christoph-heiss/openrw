@@ -4,6 +4,7 @@
 #include <engine/GameWorld.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <engine/Animator.hpp>
+#include <ai/CharacterControllerActivities.hpp>
 
 PlayerController::PlayerController(CharacterObject* character)
 	: CharacterController(character), lastRotation(glm::vec3(0.f, 0.f, 0.f)), _enabled(true)

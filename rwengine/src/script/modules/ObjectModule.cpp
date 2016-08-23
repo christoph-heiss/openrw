@@ -14,6 +14,7 @@
 #include <engine/GameState.hpp>
 #include <ai/PlayerController.hpp>
 #include <ai/DefaultAIController.hpp>
+#include <ai/CharacterControllerActivities.hpp>
 
 #include <data/CutsceneData.hpp>
 #include <data/Skeleton.hpp>

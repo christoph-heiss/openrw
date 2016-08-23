@@ -15,6 +15,7 @@
 #include <engine/GameState.hpp>
 #include <script/ScriptMachine.hpp>
 #include <dynamics/RaycastCallbacks.hpp>
+#include <ai/CharacterControllerActivities.hpp>
 
 #include <unordered_map>
 
@@ -318,13 +319,13 @@ void IngameState::tick(float dt)
 					player->exitVehicle();
 				}
 				else if (!player->isCurrentActivity(
-				             Activities::EnterVehicle::ActivityName)) {
+						CharacterController::Activity::Type::EnterVehicle)) {
 					player->enterNearestVehicle();
 				}
 			}
 			else if (glm::length2(movement) > 0.001f) {
 				if (player->isCurrentActivity(
-				        Activities::EnterVehicle::ActivityName)) {
+						CharacterController::Activity::Type::EnterVehicle)) {
 					// Give up entering a vehicle if we're alreadying doing so
 					player->skipActivity();
 				}

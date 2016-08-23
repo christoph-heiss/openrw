@@ -9,6 +9,7 @@ struct AIGraphNode;
 class CharacterObject;
 class VehicleObject;
 
+
 /**
  * @class CharacterController
  * Character Controller Interface, translates high-level behaviours into low level actions.
@@ -18,23 +19,36 @@ class CharacterController
 public:
 
 	/**
-	 * @brief The Activity struct interface
+	 * @brief The Activity class interface
 	 */
-	struct Activity {
+	class Activity {
+	public:
+		enum class Type {
+			GoTo,
+			Jump,
+			EnterVehicle,
+			ExitVehicle,
+			ShootWeapon
+		};
 
 		virtual ~Activity() {}
 
-		virtual std::string name() const = 0;
+		Type type() const { return m_type; }
+		const std::string& name() const;
 
 		/**
 		 * @brief canSkip
 		 * @return true if the activity can be skipped.
 		 */
-		virtual bool canSkip(CharacterObject*, CharacterController*) const { return false; }
-
+		virtual bool canSkip(CharacterObject*) const { return false; }
 		virtual bool update(CharacterObject* character, CharacterController* controller) = 0;
+
+	protected:
+		Activity(Type type) : m_type(type) { }
+
+		Type m_type;
 	};
-	
+
 	/**
 	 * Available AI goals.
 	 */
@@ -98,11 +112,11 @@ public:
 
 	/**
 	 * @brief IsCurrentActivity
-	 * @param activity Name of activity to check for
+	 * @param activity Type of activity to check for
 	 * @return if the given activity is the current activity
 	 */
-	bool isCurrentActivity(const std::string& activity) const;
-	
+	bool isCurrentActivity(Activity::Type activity) const;
+
 	/**
 	 * @brief update Updates the controller.
 	 * @param dt
@@ -129,87 +143,5 @@ public:
 	CharacterObject* getTargetCharacter() const { return leader; }
 };
 
-#define DECL_ACTIVITY( activity_name ) \
-	static constexpr auto ActivityName = #activity_name; \
-	std::string name() const { return ActivityName; }
-
-// TODO: Refactor this with an ugly macro to reduce code dup.
-class WeaponItem;
-
-/**
- * @brief Activities for CharacterController behaviour
- *
- * @todo Move into ControllerActivities.hpp or equivelant
- */
-namespace Activities {
-	struct GoTo : public CharacterController::Activity {
-		DECL_ACTIVITY( GoTo )
-
-		glm::vec3 target;
-		bool sprint;
-
-		GoTo( const glm::vec3& target, bool _sprint = false )
-			: target( target ), sprint(_sprint) {}
-
-		bool update(CharacterObject* character, CharacterController* controller);
-
-		bool canSkip(CharacterObject *, CharacterController *) const { return true; }
-	};
-	
-	struct Jump : public CharacterController::Activity
-	{
-		DECL_ACTIVITY( Jump )
-		
-		bool jumped;
-		
-		Jump() : jumped(false) {}
-		
-		bool update(CharacterObject* character, CharacterController* controller);
-	};
-
-	struct EnterVehicle : public CharacterController::Activity {
-		DECL_ACTIVITY( EnterVehicle )
-
-		VehicleObject* vehicle;
-		int seat;
-		
-		enum {
-			ANY_SEAT = -1 // Magic number for any seat but the driver's.
-		};
-
-		bool entering;
-
-		EnterVehicle( VehicleObject* vehicle, int seat = 0 )
-			: vehicle( vehicle ), seat( seat ), entering(false) {}
-
-		bool canSkip(CharacterObject* character, CharacterController*) const override;
-
-		bool update(CharacterObject *character, CharacterController *controller);
-	};
-
-	struct ExitVehicle : public CharacterController::Activity {
-		DECL_ACTIVITY( ExitVehicle )
-
-		const bool jacked;
-
-		ExitVehicle(bool jacked_ = false)
-			: jacked(jacked_)
-			{}
-
-		bool update(CharacterObject *character, CharacterController *controller);
-	};
-
-	struct ShootWeapon : public CharacterController::Activity {
-		DECL_ACTIVITY( ShootWeapon )
-
-		WeaponItem* _item;
-		bool _fired;
-
-		ShootWeapon( WeaponItem* item )
-			: _item(item), _fired(false) {}
-
-		bool update(CharacterObject *character, CharacterController *controller);
-	};
-}
 
 #endif

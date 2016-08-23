@@ -7,6 +7,7 @@
 #include <objects/ProjectileObject.hpp>
 #include <data/Skeleton.hpp>
 #include <engine/GameData.hpp>
+#include <ai/CharacterControllerActivities.hpp>
 
 void WeaponItem::fireHitscan(CharacterObject* owner)
 {

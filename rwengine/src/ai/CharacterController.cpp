@@ -1,4 +1,5 @@
 #include <ai/CharacterController.hpp>
+#include <ai/CharacterControllerActivities.hpp>
 #include <objects/CharacterObject.hpp>
 #include <objects/VehicleObject.hpp>
 #include <btBulletDynamicsCommon.h>
@@ -41,8 +42,7 @@ void CharacterController::skipActivity()
 {
 	// Some activities can't be cancelled, such as the final phase of entering a vehicle
 	// or jumping.
-	if (getCurrentActivity() != nullptr &&
-			getCurrentActivity()->canSkip(character, this))
+	if (getCurrentActivity() != nullptr && getCurrentActivity()->canSkip(character))
 		setActivity(nullptr);
 }
 
@@ -58,10 +58,10 @@ void CharacterController::setNextActivity(CharacterController::Activity* activit
 	}
 }
 
-bool CharacterController::isCurrentActivity(const std::string& activity) const
+bool CharacterController::isCurrentActivity(Activity::Type activity) const
 {
 	if (getCurrentActivity() == nullptr) return false;
-	return getCurrentActivity()->name() == activity;
+	return getCurrentActivity()->type() == activity;
 }
 
 void CharacterController::update(float dt)
@@ -139,6 +139,20 @@ void CharacterController::setRunning(bool run)
 }
 
 
+const std::string& CharacterController::Activity::name() const
+{
+	switch (type()) {
+	case Activity::Type::GoTo: return "GoTo";
+	case Activity::Type::Jump: return "Jump";
+	case Activity::Type::EnterVehicle: return "EnterVehicle";
+	case Activity::Type::ExitVehicle: return "ExitVehicle";
+	case Activity::Type::ShootWeapon: return "ShootWeapon";
+	}
+
+	return "<unknown>";
+}
+
+
 bool Activities::GoTo::update(CharacterObject *character, CharacterController *controller)
 {
 	/* TODO: Use the ai nodes to navigate to the position */
@@ -182,7 +196,7 @@ bool Activities::Jump::update(CharacterObject* character, CharacterController* c
 	return false;
 }
 
-bool Activities::EnterVehicle::canSkip(CharacterObject *character, CharacterController *) const
+bool Activities::EnterVehicle::canSkip(CharacterObject *character) const
 {
 	// If we're already inside the vehicle, it can't helped.
 	return character->getCurrentVehicle() == nullptr;
@@ -423,7 +437,7 @@ bool Activities::ShootWeapon::update(CharacterObject *character, CharacterContro
 {
 	RW_UNUSED(controller);
 
-	auto& wepdata = _item->getWeaponData();
+	auto& wepdata = item->getWeaponData();
 
 	// Instant hit weapons loop their anim
 	// Thrown projectiles have lob / throw.
@@ -440,7 +454,7 @@ bool Activities::ShootWeapon::update(CharacterObject *character, CharacterContro
 	bool hasammo = itemState.bulletsClip > 0;
 
 	if( wepdata->fireType == WeaponData::INSTANT_HIT ) {
-		if( _item->isFiring(character) && hasammo ) {
+		if( item->isFiring(character) && hasammo ) {
 
 			auto shootanim = character->engine->data->animations[wepdata->animation1];
 			if( shootanim ) {
@@ -454,14 +468,14 @@ bool Activities::ShootWeapon::update(CharacterObject *character, CharacterContro
 
 				auto currID = character->animator->getAnimationTime(AnimIndexAction);
 
-				if( currID >= firetime && ! _fired ) {
+				if( currID >= firetime && !fired ) {
 					itemState.bulletsClip --;
-					_item->fire(character);
-					_fired = true;
+					item->fire(character);
+					fired = true;
 				}
 				if( currID > loopend ) {
 					character->animator->setAnimationTime( AnimIndexAction, loopstart );
-					_fired = false;
+					fired = false;
 				}
 			}
 		}
@@ -485,10 +499,10 @@ bool Activities::ShootWeapon::update(CharacterObject *character, CharacterContro
 			auto firetime = wepdata->animCrouchFirePoint / 100.f;
 			auto currID = character->animator->getAnimationTime(AnimIndexAction);
 
-			if( currID >= firetime && !_fired ) {
+			if( currID >= firetime && !fired ) {
 				itemState.bulletsClip --;
-				_item->fire(character);
-				_fired = true;
+				item->fire(character);
+				fired = true;
 			}
 			if( character->animator->isCompleted(AnimIndexAction) ) {
 				return true;
