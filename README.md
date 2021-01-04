@@ -1,5 +1,5 @@
 # OpenRW
-[![IRC freenode #openrw](https://raster.shields.io/badge/freenode-%23openrw-blue)](https://webchat.freenode.net/?channels=%23openrw)
+This is my personal fork of [rwengine/openrw](https://github.com/rwengine/openrw), which has been abandoned.
 
 ## About
 
@@ -10,23 +10,16 @@ OpenRW has been ported to Linux, macOS, Windows, and several variants of BSD.
 A legitimate copy of the original PC game is required to run OpenRW. Without
 this it will not be possible to play.
 
-Windows | Linux | macOS | coverage
----| --- | ---  | ---
-[![Build status](https://ci.appveyor.com/api/projects/status/k33qf9ssrja6ckx8/branch/master?svg=true)](https://ci.appveyor.com/project/rwengine/openrw/branch/master) | [![Build Status](https://travis-ci.com/rwengine/openrw.svg?branch=master)](https://travis-ci.com/rwengine/openrw) | [![Build Status](https://travis-ci.com/rwengine/openrw.svg?branch=master)](https://travis-ci.com/rwengine/openrw) | [![codecov](https://codecov.io/gh/rwengine/openrw/branch/master/graph/badge.svg)](https://codecov.io/gh/rwengine/openrw)
-
+Windows | Linux | macOS
+--- | --- | ---
+[![Build status](https://ci.appveyor.com/api/projects/status/2vqdn7h3g4ql38jq/branch/fork?svg=true)](https://ci.appveyor.com/project/christoph-heiss/openrw/branch/fork) | x | x
 
 ## Links
 
- * [FAQ](https://github.com/rwengine/openrw/wiki/FAQ)
- * [Getting Started](https://github.com/rwengine/openrw/wiki/Getting-Started)
- * [Completable Missions](https://github.com/rwengine/openrw/issues/52)
- * [Contributing](https://github.com/rwengine/openrw/wiki/Contributing)
- * [CDash](https://my.cdash.org/index.php?project=OpenRW)
-
-## Screenshots
-![OpenRW: GTA III Opening Cutscene](https://user-images.githubusercontent.com/418211/48028326-21260b80-e143-11e8-9a7e-53c073c39cc6.png)
-![OpenRW: GTA III Driving](https://user-images.githubusercontent.com/418211/48028321-208d7500-e143-11e8-981f-70e47f5d1c50.png)
-![OpenRW: GTA III City](https://user-images.githubusercontent.com/418211/48028322-208d7500-e143-11e8-8759-ccb440f4ebf3.png)
+ * [FAQ](https://github.com/christoph-heiss/openrw/wiki/FAQ)
+ * [Getting Started](https://github.com/christoph-heiss/openrw/wiki/Getting-Started)
+ * [Playable Missions](https://github.com/christoph-heiss/openrw/wiki/Mission-tracker)
+ * [Contributing](https://github.com/christoph-heiss/openrw/wiki/Contributing)
 
 ## License
 
