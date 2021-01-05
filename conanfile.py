@@ -1,11 +1,10 @@
 from conans import ConanFile, CMake
 
-
 class OpenrwConan(ConanFile):
     name = 'openrw'
     version = 'master'
     license = 'GPL3'
-    url = 'https://github.com/rwengine/openrw'
+    url = 'https://github.com/christoph-heiss/openrw'
     description = "OpenRW 'Open ReWrite' is an un-official open source recreation of the classic Grand Theft Auto III game executable"
     settings = 'os', 'compiler', 'build_type', 'arch'
     options = {
