@@ -111,7 +111,7 @@ void SoundManager::deinitializeOpenAL() {
 }
 
 bool SoundManager::loadSound(const std::string& name,
-                             const std::string& fileName, bool streamed) {
+                             const std::filesystem::path& fileName, bool streamed) {
     Sound* sound = nullptr;
     auto sound_iter = sounds.find(name);
 
@@ -276,10 +276,10 @@ void SoundManager::resumeAllSounds() {
     }
 }
 
-bool SoundManager::playBackground(const std::string& fileName) {
-    if (this->loadSound(fileName, fileName)) {
-        backgroundNoise = fileName;
-        auto& sound = getSoundRef(fileName);
+bool SoundManager::playBackground(const std::filesystem::path& fileName) {
+    if (this->loadSound(fileName.string(), fileName)) {
+        backgroundNoise = fileName.string();
+        auto& sound = getSoundRef(fileName.string());
         sound.play();
         return true;
     }
@@ -288,7 +288,7 @@ bool SoundManager::playBackground(const std::string& fileName) {
 }
 
 bool SoundManager::loadMusic(const std::string& name,
-                             const std::string& fileName) {
+                             const std::filesystem::path& fileName) {
     return loadSound(name, fileName);
 }
 

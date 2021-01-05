@@ -13,23 +13,19 @@ constexpr size_t kAssetRecordSize{2048};
 
 void to_lowercase_inplace(char* name) {
     size_t len = std::strlen(name);
-
-    std::transform(
-        name, name+len, name,
-        [](char ch) -> char { return std::tolower(ch); }
-    );
-} // namespace
-
+    std::transform(name, name+len, name, ::tolower);
 }
 
-bool LoaderIMG::load(const rwfs::path& filepath) {
+} // namespace
+
+bool LoaderIMG::load(const std::filesystem::path& filepath) {
     assert(m_archive.empty());
     m_archive = filepath;
 
     auto dirPath = filepath;
     dirPath.replace_extension(".dir");
 
-    std::ifstream file(dirPath.string(), std::ios::binary);
+    std::ifstream file(dirPath, std::ios::binary);
     if (!file.is_open()) {
         RW_ERROR("Failed to open " + dirPath.string());
         return false;
@@ -103,8 +99,7 @@ std::unique_ptr<char[]> LoaderIMG::loadToMemory(const std::string& assetname) {
 }
 
 /// Writes the contents of assetname to filename
-bool LoaderIMG::saveAsset(const std::string& assetname,
-                          const std::string& filename) {
+bool LoaderIMG::saveAsset(const std::string& assetname, const std::filesystem::path& filename) {
     auto raw_data = loadToMemory(assetname);
     if (!raw_data) {
         return false;

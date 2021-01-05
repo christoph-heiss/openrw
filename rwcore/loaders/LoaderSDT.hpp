@@ -1,12 +1,10 @@
 #ifndef _LIBRW_LOADERSDT_HPP_
 #define _LIBRW_LOADERSDT_HPP_
 
-#include <rw/filesystem.hpp>
-
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <memory>
-#include <string>
 #include <vector>
 
 typedef struct {
@@ -62,14 +60,14 @@ public:
     ~LoaderSDT() = default;
 
     /// Load the structure of the archive
-    bool load(const rwfs::path& sdtPath, const rwfs::path& rawPath);
+    bool load(const std::filesystem::path& sdtPath, const std::filesystem::path& rawPath);
 
     /// Load a file from the archive to memory and pass a pointer to it
     /// Warning: Returns nullptr if by any reason it can't load the file
     std::unique_ptr<char[]> loadToMemory(size_t index, bool asWave = true);
 
     /// Writes the contents of index to filename
-    bool saveAsset(size_t index, const std::string& filename,
+    bool saveAsset(size_t index, const std::filesystem::path& filename,
                    bool asWave = true);
 
     /// Get the information of an asset in the examining archive
@@ -85,7 +83,7 @@ public:
     LoaderSDTFile assetInfo{};
 private:
     Version m_version{GTAIIIVC};      ///< Version of this SDT archive
-    std::string m_archive;  ///< Path to the archive being used (no extension)
+    std::filesystem::path m_archive;  ///< Path to the archive being used (no extension)
     std::vector<LoaderSDTFile> m_assets;  ///< Asset info of the archive
 };
 

@@ -4,7 +4,6 @@
 #include "ViewerInterface.hpp"
 
 #include <fonts/GameTexts.hpp>
-#include <rw/filesystem.hpp>
 
 #include <QTableView>
 

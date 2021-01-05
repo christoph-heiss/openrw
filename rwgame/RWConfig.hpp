@@ -1,7 +1,7 @@
 #ifndef RWGAME_RWCONFIG_HPP
 #define RWGAME_RWCONFIG_HPP
 
-#include <rw/filesystem.hpp>
+#include <filesystem>
 
 #include <boost/program_options.hpp>
 
@@ -243,13 +243,18 @@ public:
      */
     RWConfigParser() = default;
 
-    static rwfs::path getDefaultConfigPath();
+    static std::filesystem::path getDefaultConfigPath();
 
-    std::tuple<RWConfigLayer, RWConfigParser::ParseResult> loadFile(const rwfs::path &path) const;
+    std::tuple<RWConfigLayer, RWConfigParser::ParseResult> loadFile(
+        const std::filesystem::path &path) const;
 
-    ParseResult saveFile(const rwfs::path &path, const RWConfigLayer &layer) const;
+    ParseResult saveFile(
+        const std::filesystem::path &path, const RWConfigLayer &layer) const;
 
-    ParseResult saveFile(const rwfs::path &path, const RWConfigLayer &layer, const std::map<std::string, std::string> &extra) const;
+    ParseResult saveFile(
+        const std::filesystem::path &path,
+        const RWConfigLayer &layer,
+        const std::map<std::string, std::string> &extra) const;
 
     /**
      * @brief layer_to_string Convert the layer to a INI string string

@@ -1,23 +1,16 @@
 #ifndef _LIBRW_FILEINDEX_HPP_
 #define _LIBRW_FILEINDEX_HPP_
 
+#include <filesystem>
+#include <string>
 #include <unordered_map>
-#include <memory>
 
 #include <loaders/LoaderIMG.hpp>
-#include <rw/filesystem.hpp>
 #include <rw/forward.hpp>
 
 
 class FileIndex {
 public:
-    /**
-     * @brief normalizeString Normalize a file path
-     * @param filePath the path to normalize
-     * @return normalized file path
-     */
-    static std::string normalizeFilePath(const std::string &filePath);
-
     /**
      * @brief indexDirectory index all files at path
      * @param path the path to index
@@ -25,7 +18,7 @@ public:
      * This is used to build the mapping of lower-case file paths to the
      * true case on the file system for platforms where this is an issue.
      */
-    void indexTree(const rwfs::path &path);
+    void indexTree(const std::filesystem::path &path);
 
     /**
      * @brief findFilePath finds disk path for a game data file
@@ -33,7 +26,7 @@ public:
      * @return The file path as it exists on disk
      * @throws if this FileIndex has not indexed the path
      */
-    rwfs::path findFilePath(const std::string &filePath) const;
+    const std::filesystem::path& findFilePath(const std::filesystem::path &filePath) const;
 
     /**
      * @brief openFileRaw Opens a raw file on the disk
@@ -41,7 +34,7 @@ public:
      * @return FileHandle to the file
      * @throws if this FileIndex has not indexed the path
      */
-    FileContentsInfo openFileRaw(const std::string &filePath) const;
+    FileContentsInfo openFileRaw(const std::filesystem::path &filePath) const;
 
     /**
      * Adds the files contained within the given Archive file to the
@@ -49,7 +42,7 @@ public:
      * @param filePath path to the archive
      * @throws if this FileIndex has not indexed the archive itself
      */
-    void indexArchive(const std::string &filePath);
+    void indexArchive(const std::filesystem::path &filePath);
 
     /**
      * Returns a FileHandle for the file if it can be found in the
@@ -57,7 +50,7 @@ public:
      * @param filePath name of the file to open
      * @return FileHandle to the file, nullptr if this FileINdexed has not indexed the path
      */
-    FileContentsInfo openFile(const std::string &filePath);
+    FileContentsInfo openFile(const std::filesystem::path &filePath);
 
 private:
     /**
@@ -77,7 +70,7 @@ private:
         /// Type of indexed data.
         IndexedDataType type;
         /// Path of indexed data.
-        std::string path;
+        std::filesystem::path path;
         /// Extra data of assets (FIXME: use c++17 std::variant or std::option)
         std::string assetData;
     };
@@ -93,7 +86,7 @@ private:
      * @return IndexedData pointer if this FileIndex has indexed the filePath
      * @throws If this FileIndex has not indexed filePath
      */
-    const IndexedData *getIndexedDataAt(const std::string &filePath) const;
+    const IndexedData *getIndexedDataAt(const std::filesystem::path &filePath) const;
 
     /**
      * @brief loaders_ Maps .img filepaths to its respective loader
