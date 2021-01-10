@@ -6,11 +6,12 @@
 
 #include "rw/debug.hpp"
 
-bool LoaderSDT::load(const rwfs::path& sdtPath, const rwfs::path& rawPath) {
-    const auto sdtName = sdtPath.string();
-    const auto rawName = rawPath.string();
-
-    FILE* fp = fopen(sdtName.c_str(), "rb");
+bool LoaderSDT::load(const std::filesystem::path& sdtPath, const std::filesystem::path& rawPath) {
+#ifdef _MSC_VER
+    FILE* fp = _wfopen(sdtPath.c_str(), L"rb");
+#else
+    FILE* fp = fopen(sdtPath.c_str(), "rb");
+#endif // _MSC_VER
     if (fp) {
         fseek(fp, 0, SEEK_END);
         unsigned long fileSize = ftell(fp);
@@ -28,10 +29,10 @@ bool LoaderSDT::load(const rwfs::path& sdtPath, const rwfs::path& rawPath) {
         }
 
         fclose(fp);
-        m_archive = rawName;
+        m_archive = rawPath;
         return true;
     } else {
-        RW_ERROR("Error cannot open " << sdtName);
+        RW_ERROR("Error cannot open " << sdtPath);
         return false;
     }
 }
@@ -53,9 +54,11 @@ std::unique_ptr<char[]> LoaderSDT::loadToMemory(size_t index, bool asWave) {
         return nullptr;
     }
 
-    std::string rawName = m_archive;
-
-    FILE* fp = fopen(rawName.c_str(), "rb");
+#ifdef _MSC_VER
+    FILE* fp = _wfopen(m_archive.c_str(), L"rb");
+#else
+    FILE* fp = fopen(m_archive.c_str(), "rb");
+#endif // _MSC_VER
     if (fp) {
         std::unique_ptr<char[]> raw_data;
         char* sample_data;
@@ -95,18 +98,22 @@ std::unique_ptr<char[]> LoaderSDT::loadToMemory(size_t index, bool asWave) {
 }
 
 /// Writes the contents of assetname to filename
-bool LoaderSDT::saveAsset(size_t index, const std::string& filename,
+bool LoaderSDT::saveAsset(size_t index, const std::filesystem::path& filename,
                           bool asWave) {
     auto raw_sound = loadToMemory(index, asWave);
     if (!raw_sound) return false;
 
+#ifdef _MSC_VER
+    FILE* dumpFile = _wfopen(filename.c_str(), L"wb");
+#else
     FILE* dumpFile = fopen(filename.c_str(), "wb");
+#endif // _MSC_VER
     if (dumpFile) {
         if (findAssetInfo(index, assetInfo)) {
             fwrite(raw_sound.get(), 1, assetInfo.size + (asWave ? sizeof(WaveHeader) : 0),
                    dumpFile);
             printf("=> SDT: Saved %zu to disk with filename %s\n", index,
-                   filename.c_str());
+                   filename.native().c_str());
         }
         fclose(dumpFile);
 
